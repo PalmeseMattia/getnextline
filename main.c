@@ -6,7 +6,7 @@
 /*   By: dpalmese <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/25 10:51:04 by dpalmese          #+#    #+#             */
-/*   Updated: 2024/02/27 11:14:55 by rizz             ###   ########.fr       */
+/*   Updated: 2024/02/27 12:06:33 by rizz             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include <stdio.h>
@@ -64,14 +64,14 @@ char	*get_next_line(int fd)
 		if (newline)
 		{
 			line_length = newline - (buff.content + buff.index);
-			line = realloc(line, ft_strlen(line) + line_length + 1);
+			line = ft_strrealloc(line, ft_strlen(line) + line_length + 1);
 			ft_memcpy(line, (buff.content + buff.index), line_length);
 			buff.index += line_length + 1;
 			return (line);
 		}
 		else
 		{
-			line = realloc(line, ft_strlen(line) + (BUFFER_SIZE - buff.index) + 1);
+			line = ft_strrealloc(line, ft_strlen(line) + (BUFFER_SIZE - buff.index) + 1);
 			ft_memcpy(line + ft_strlen(line), (buff.content + buff.index), (BUFFER_SIZE - buff.index));
 			buff.index = 0;
 		}
