@@ -6,7 +6,7 @@
 /*   By: rizz <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/29 09:59:01 by rizz              #+#    #+#             */
-/*   Updated: 2024/03/03 05:44:19 by rizz             ###   ########.fr       */
+/*   Updated: 2024/03/04 01:01:35 by rizz             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "get_next_line.h"
@@ -22,16 +22,23 @@ char	*get_next_line(int fd)
 	line = NULL;
 	while (1)
 	{
-		bytes_read = populate_buffer(b, fd);
-		if (bytes_read <= 0 && b.index >= BUFFER_SIZE)
+		if (b.index == 0 || b.index > BUFFER_SIZE)
+		{
+			bytes_read = read(fd, b.content, BUFFER_SIZE);
+			b.index = 0;
+		}
+		if (bytes_read <= 0)
+		{
+			free(line);
 			return (NULL);
+		}
 		newline = ft_memchr(b.content + b.index, '\n', BUFFER_SIZE - b.index);
 		if (newline)
 		{
-			line_length = newline - (b.content + b.index);
+			line_length = newline - (b.content + b.index) + 1;
 			line = ft_strrealloc(line, ft_strlen(line) + line_length + 1);
 			ft_memcpy(line, (b.content + b.index), line_length);
-			b.index += line_length + 1;
+			b.index += line_length;
 			return (line);
 		}
 		line = ft_strrealloc(line, ft_strlen(line) + (BUFFER_SIZE - b.index) + 1);
