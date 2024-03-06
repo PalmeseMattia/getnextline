@@ -68,3 +68,8 @@ void	*ft_memchr(const void *s, int c, size_t n)
 	}
 	return (NULL);
 }
+
+void	ft_bzero(void *ptr, size_t n)
+{
+	ft_memset(ptr, 0, n);
+}

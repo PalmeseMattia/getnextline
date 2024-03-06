@@ -6,60 +6,59 @@
 /*   By: rizz <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/29 09:59:01 by rizz              #+#    #+#             */
-/*   Updated: 2024/03/04 01:01:35 by rizz             ###   ########.fr       */
+/*   Updated: 2024/03/04 18:52:08 by rizz             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "get_next_line.h"
 
 char	*get_next_line(int fd)
 {
-	static t_buffer		b = {.index = 0};
-	int					bytes_read;
-	char				*line;
-	char				*newline;
-	size_t				line_length;
+	static t_buffer buff = {.index = 0, .bytes_read = 1};
+	int				line_size;
+	char			*res;
 
-	line = NULL;
-	while (1)
+	res = NULL;
+	line_size = 0;
+	while(1)
 	{
-		if (b.index == 0 || b.index > BUFFER_SIZE)
+		read_line(fd, &buff);
+		if (buff.bytes_read <= 0 || buff.content[buff.index] == '\0')
 		{
-			bytes_read = read(fd, b.content, BUFFER_SIZE);
-			b.index = 0;
-		}
-		if (bytes_read <= 0)
-		{
-			free(line);
 			return (NULL);
+			free(res);
 		}
-		newline = ft_memchr(b.content + b.index, '\n', BUFFER_SIZE - b.index);
-		if (newline)
-		{
-			line_length = newline - (b.content + b.index) + 1;
-			line = ft_strrealloc(line, ft_strlen(line) + line_length + 1);
-			ft_memcpy(line, (b.content + b.index), line_length);
-			b.index += line_length;
-			return (line);
-		}
-		line = ft_strrealloc(line, ft_strlen(line) + (BUFFER_SIZE - b.index) + 1);
-		ft_memcpy(line + ft_strlen(line), (b.content + b.index), (BUFFER_SIZE - b.index));
-		b.index = 0;
+		line_size = find_line_size(buff);
+		res = ft_strrealloc(res, ft_strlen(res) + line_size + 1);
+		ft_memcpy(res + ft_strlen(res), buff.content + buff.index, line_size);
+		buff.index+=line_size;
+		if (ft_memchr(res,'\n', ft_strlen(res)))
+			return (res);
 	}
 }
 
-int	populate_buffer(t_buffer buff, int fd)
+void read_line(int fd, t_buffer *buff)
 {
-	int	bytes_read;
-
-	bytes_read = 0;
-	if (buff.index == 0 || buff.index > BUFFER_SIZE)
+	if ((buff->index == 0 || buff->index >= BUFFER_SIZE))
 	{
-		bytes_read = read(fd, buff.content, BUFFER_SIZE);
-		buff.index = 0;
+		buff->bytes_read = (read(fd, buff->content, BUFFER_SIZE));
+		buff->index = 0;
 	}
-	return (bytes_read);
 }
 
+int find_line_size(t_buffer buff)
+{
+    int size;
+
+	size = 0;
+	while (buff.index < BUFFER_SIZE && buff.content[buff.index] != '\n' && buff.content[buff.index] != EOF && buff.content[buff.index] != '\0')
+	{
+		buff.index++;
+		size++;
+	}
+	if (buff.content[buff.index] == '\n')
+		return (size + 1);
+	return (size);
+}
 char	*ft_strrealloc(char *ptr, size_t size)
 {
 	char	*new_ptr;
@@ -101,7 +100,3 @@ void	*ft_calloc(size_t nmemb, size_t size)
 	return (p);
 }
 
-void	ft_bzero(void *ptr, size_t n)
-{
-	ft_memset(ptr, 0, n);
-}
