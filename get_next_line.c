@@ -24,8 +24,9 @@ char	*get_next_line(int fd)
 		read_line(fd, &buff);
 		if (buff.bytes_read <= 0 || buff.content[buff.index] == '\0')
 		{
-			return (NULL);
-			free(res);
+            break ;
+			//return (NULL);
+			//free(res);
 		}
 		line_size = find_line_size(buff);
 		res = ft_strrealloc(res, ft_strlen(res) + line_size + 1);
@@ -34,6 +35,10 @@ char	*get_next_line(int fd)
 		if (ft_memchr(res,'\n', ft_strlen(res)))
 			return (res);
 	}
+    if (res && *res)
+        return res;
+    free(res);
+    return NULL;
 }
 
 void read_line(int fd, t_buffer *buff)
@@ -49,16 +54,17 @@ int find_line_size(t_buffer buff)
 {
     int size;
 
-	size = 0;
+	size = 1;
 	while (buff.index < BUFFER_SIZE && buff.content[buff.index] != '\n' && buff.content[buff.index] != EOF && buff.content[buff.index] != '\0')
 	{
 		buff.index++;
 		size++;
 	}
 	if (buff.content[buff.index] == '\n')
-		return (size + 1);
+		return (size);
 	return (size);
 }
+
 char	*ft_strrealloc(char *ptr, size_t size)
 {
 	char	*new_ptr;
