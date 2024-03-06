@@ -8,20 +8,22 @@ int		find_line_size(t_buffer buff);
 int main() {
 	char *line;
 
+	int i = 0;
 	int fd = open("bible.txt", O_RDONLY);
 	if (fd < 0) {
 		perror("Error while opening file");
 		return (-1);
 	}
-	while((line = get_next_line(fd)) != NULL)
+	while((line = get_next_line(fd)) != NULL && i < 5)
 	{
 		printf("riga: ");
 		printf("%s", line);
+		i++;
 	}
 	close(fd);
 	return (0);
 }
-
+/*
 char	*get_next_line(int fd)
 {
 	static t_buffer buff = {.index = 0, .bytes_read = 1};
@@ -66,4 +68,4 @@ int find_line_size(t_buffer buff)
 	if (buff.content[buff.index] == '\n')
 		return (size + 1);
 	return (size);
-}
+}*/

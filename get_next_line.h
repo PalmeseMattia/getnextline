@@ -6,14 +6,14 @@
 /*   By: rizz <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/03 05:35:33 by rizz              #+#    #+#             */
-/*   Updated: 2024/03/04 16:14:57 by rizz             ###   ########.fr       */
+/*   Updated: 2024/03/06 18:12:24 by lmoricon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 100
+#  define BUFFER_SIZE 42
 # endif
 
 # include <unistd.h>
@@ -27,6 +27,7 @@ typedef struct s_buffer
 	int		index;
 	long	bytes_read;
 }		t_buffer;
+
 char	*ft_strrealloc(char *ptr, size_t size);
 char	*get_next_line(int fd);
 void	*ft_memset(void *ptr, int value, size_t n);
